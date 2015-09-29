@@ -1,5 +1,4 @@
 (ns eopl.core
-  (:require [clojure.core.typed :as t])
   (:gen-class))
 
 (defn -main

@@ -9,8 +9,7 @@
     (is (= (extend-env (empty-env) {'a 42}) 
            (list {'a 42}))))
   (let [e1 (extend-env (empty-env) {'a 42 'b 24}) 
-        e2 (extend-env e1 {'a 32})
-        _ (print e2)]
+        e2 (extend-env e1 {'a 32})]
     (testing "lookup"
       (testing "in current scope"
         (is (= (apply-env e1 'a) 42)))

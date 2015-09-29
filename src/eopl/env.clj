@@ -8,7 +8,8 @@
 
 
 (defn extend-env 
-  "Extend and environment with a new set of bindings."
+  "Extend and environment with a new set of bindings.
+  'bindings is a map."
   [env bindings]
   (conj env bindings))
 
