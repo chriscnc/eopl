@@ -5,25 +5,39 @@
   (:require [eopl.env :refer :all]))
 
 
-(defmulti eval-expression
-  "Dispatch on the :op key of 'exp'. Possible :op values
-  are...
+(defn apply-primitive
+  "Evaluate primitive expressions with args that have
+  already been evalutated in an environment"
+  [prim args]
+  (case prim
+    :+ (+ (first args) (second args))
+    :- (- (first args) (second args))
+    :* (* (first args) (second args))
+    :add1 (inc (first args))
+    :sub1 (dec (first args))
+    (throw (Exception. (str "Unknown primitive: " prim)))))
 
-  :lit-exp - A literal expression, return the :datum.
 
-  :var-exp - A variable expression, return the value of 
-             :id in the environment
-  "
-  {:arglists '([exp env])}
-  (fn [exp env] (:op exp)))
+(declare eval-rands)
 
 
-(defmethod eval-expression :lit-exp
+(defn eval-expression 
+  "Evaluate expressions in an environment. Expression types are...
+    :lit-exp - a literal expression
+    :var-exp - a variable expression
+    :primapp-exp - a primitive operation expression"
   [exp env]
-  (:datum exp))
-  
+  (case (:op exp)
+    :lit-exp (:datum exp)
+    :var-exp (apply-env env (:id exp))
+    :primapp-exp (apply-primitive (:prim exp)
+                                  (eval-rands (:rands exp) env))
+    (throw (Exception. (str "Unknown expression type: " (:op exp))))))
 
-(defmethod eval-expression :var-exp
-  [exp env]
-  (apply-env env (:id exp)))
+
+(defn eval-rands
+  "Evaluate a list of operands in an environment"
+  [rands env]
+  (map #(eval-expression % env) rands))
+
 
