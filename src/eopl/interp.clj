@@ -41,3 +41,10 @@
   (map #(eval-expression % env) rands))
 
 
+;; our language doesn't have statements, so we don't need this yet.
+(defn eval-program
+  "Evaluates a program"
+  [pgm]
+  (case (:op pgm)
+    :a-program (eval-expression (:exp pgm) (empty-env))
+    (throw (Exception. (str "Unknown op code: " (:op pgm))))))

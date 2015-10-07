@@ -8,7 +8,7 @@
   (testing "lit-exp"
     (let [env (empty-env)
           exp {:op :lit-exp
-                :datum 42}]
+               :datum 42}]
       (is (= 42 (eval-expression exp env)))))
   (testing "var-exp"
     (let [env (extend-env (empty-env) {'x 6})
@@ -51,3 +51,10 @@
                      (empty-env))
          (list 4 2))))
          
+
+(deftest test-eval-program
+  (testing "a-program"
+    (let [pgm {:op :a-program
+               :exp {:op :lit-exp
+                     :datum 42}}]
+      (is (= 42 (eval-program pgm))))))

@@ -1,7 +1,25 @@
 (ns eopl.core
+  (:require [eopl.env :refer :all]
+            [eopl.interp :refer :all]
+            [eopl.parser :refer :all])
   (:gen-class))
 
+
+(defn read-eval-print 
+  []
+  (do
+    (print "eopl=> ")
+    (flush)
+    (try
+      (let [line (read-line)]
+        (when (not (empty? line))
+          (println (eval-expression (parse (read-string line))
+                                    (empty-env)))))
+      (catch Exception e
+        (println e)))
+    (recur)))
+
+
 (defn -main
-  "I don't do a whole lot ... yet."
   [& args]
-  (println "Hello, World!"))
+  (read-eval-print))
