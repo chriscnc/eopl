@@ -27,7 +27,19 @@
   (testing "unknown expression"
     (let [env (empty-env)
           exp {:op :unknown}]
-      (is (thrown? Exception (eval-expression exp env))))))
+      (is (thrown? Exception (eval-expression exp env)))))
+  (testing "primapp-exp print"
+    (let [env (empty-env)
+          exp {:op :primapp-exp 
+               :prim :print
+               :rands [{:op :primapp-exp
+                        :prim :+
+                        :rands [{:op :lit-exp
+                                 :datum 4}
+                                {:op :lit-exp
+                                 :datum 2}]}]}]
+          (is (= "6\n" (with-out-str (eval-expression exp env))))))
+  )
 
 
 (deftest test-apply-primitive
@@ -40,7 +52,10 @@
   (testing "add1"
     (is (= 5 (apply-primitive :add1 [4]))))
   (testing "sub1"
-    (is (= 3 (apply-primitive :sub1 [4])))))
+    (is (= 3 (apply-primitive :sub1 [4]))))
+  (testing "print"
+    (is (= "42\n" (with-out-str (apply-primitive :print [42]))))
+    (is (= 1 (apply-primitive :print [42])))))
 
 
 (deftest test-eval-rands

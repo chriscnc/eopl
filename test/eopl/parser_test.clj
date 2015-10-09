@@ -47,7 +47,12 @@
              :rands [{:op :lit-exp
                       :datum 43}]}
            (parse (read-string "(sub1 43)")))))
-
+  (testing "primapp-exp print"
+    (is (= '{:op :primapp-exp 
+             :prim :print
+             :rands [{:op :lit-exp
+                      :datum 42}]}
+           (parse (read-string "(print 42)")))))
   )
 
 
