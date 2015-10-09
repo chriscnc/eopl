@@ -15,6 +15,7 @@
     :* (* (first args) (second args))
     :add1 (inc (first args))
     :sub1 (dec (first args))
+    :minus (* -1 (first args))
     (throw (Exception. (str "Unknown primitive: " prim)))))
 
 

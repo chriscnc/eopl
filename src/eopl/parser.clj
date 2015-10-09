@@ -26,6 +26,9 @@
                             (= rator 'sub1) {:op :primapp-exp
                                           :prim :sub1
                                           :rands (map parse rands)}
+                            (= rator 'minus) {:op :primapp-exp
+                                          :prim :minus
+                                          :rands (map parse rands)}
                             :else (throw (Exception. (str "Unknown rator: " rator)))))
         :else (throw (Exception. (str "Invalid element: " elt)))))
     
