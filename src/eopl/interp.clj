@@ -15,6 +15,24 @@
     :* (* (first args) (second args))
     :add1 (inc (first args))
     :sub1 (dec (first args))
+    :list (apply list args)
+
+    ; args is a list of arguments where the first argument is list 
+    :car (let [lst (first args)]
+           (if (empty? lst)
+             (throw (Exception. "Can't take the car of an empty list"))
+             (first lst)))
+
+    ; args is a list of arguments where
+    ; the first argument is an element and the second is a list
+    :cons (let [elt (first args)
+                lst (second args)]
+            (cons elt lst))
+
+    ; args is a list of arguments where the first argument is a list
+    :cdr (let [lst (first args)]
+           (rest lst))
+
     (throw (Exception. (str "Unknown primitive: " prim)))))
 
 

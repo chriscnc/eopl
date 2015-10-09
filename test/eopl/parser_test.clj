@@ -48,6 +48,55 @@
                       :datum 43}]}
            (parse (read-string "(sub1 43)")))))
 
+  (testing "primapp-exp list"
+    (is (= '{:op :primapp-exp 
+             :prim :list
+             :rands [{:op :lit-exp
+                      :datum 4}
+                     {:op :lit-exp
+                      :datum 2}]}
+           (parse (read-string "(list 4 2)")))))
+
+  (testing "primapp-exp car"
+    (is (= {:op :primapp-exp 
+             :prim :car
+             :rands [{:op :primapp-exp
+                      :prim :list
+                      :rands [{:op :lit-exp
+                               :datum 1}
+                              {:op :lit-exp
+                               :datum 2}
+                              {:op :lit-exp
+                               :datum 3}]}]}
+           (parse (read-string "(car (list 1 2 3))")))))
+
+  (testing "primapp-exp cdr"
+    (is (= {:op :primapp-exp 
+             :prim :cdr
+             :rands [{:op :primapp-exp
+                      :prim :list
+                      :rands [{:op :lit-exp
+                               :datum 1}
+                              {:op :lit-exp
+                               :datum 2}
+                              {:op :lit-exp
+                               :datum 3}]}]}
+           (parse (read-string "(cdr (list 1 2 3))")))))
+
+  (testing "primapp-exp cons"
+    (is (= {:op :primapp-exp 
+             :prim :cons
+             :rands [{:op :lit-exp
+                      :datum 4}
+                     {:op :primapp-exp
+                      :prim :list
+                      :rands [{:op :lit-exp
+                               :datum 1}
+                              {:op :lit-exp
+                               :datum 2}
+                              {:op :lit-exp
+                               :datum 3}]}]}
+           (parse (read-string "(cons 4 (list 1 2 3))")))))
   )
 
 

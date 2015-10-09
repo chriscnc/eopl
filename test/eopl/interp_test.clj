@@ -40,7 +40,26 @@
   (testing "add1"
     (is (= 5 (apply-primitive :add1 [4]))))
   (testing "sub1"
-    (is (= 3 (apply-primitive :sub1 [4])))))
+    (is (= 3 (apply-primitive :sub1 [4]))))
+  (testing "list"
+    (is (= (list 1 2 3) (apply-primitive :list (list 1 2 3)))))
+  (testing "list - empty"
+    (is (= (list) (apply-primitive :list (list)))))
+  (testing "car"
+    ; args is a list
+    (is (= 1 (apply-primitive :car (list (list 1 2 3))))))
+  (testing "car on the empty list"
+    (is (thrown? Exception (apply-primitive :car (list (list))))))
+  (testing "cons"
+    ; args is an element and a list
+    (is (= (list 1 2 3) (apply-primitive :cons (list 1 (list 2 3))))))
+  (testing "cdr"
+    ; args is a list
+    (is (= (list 2 3) (apply-primitive :cdr (list (list 1 2 3))))))
+  (testing "cdr on the empty list"
+    (is (= (list) (apply-primitive :cdr (list (list))))))
+  )
+
 
 
 (deftest test-eval-rands
