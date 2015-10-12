@@ -21,6 +21,12 @@
 (declare eval-rands)
 
 
+(defn true-value?
+  "Abstracts our encoding of boolean"
+  [x]
+  (not (zero? x)))
+
+
 (defn eval-expression 
   "Evaluate expressions in an environment. Expression types are...
     :lit-exp - a literal expression
@@ -30,6 +36,12 @@
   (case (:op exp)
     :lit-exp (:datum exp)
     :var-exp (apply-env env (:id exp))
+    :if-exp (let [test-exp (:test-exp exp)
+                  true-exp (:true-exp exp)
+                  false-exp (:false-exp exp)]
+              (if (true-value? (eval-expression test-exp env))
+                (eval-expression true-exp env)
+                (eval-expression false-exp env)))
     :primapp-exp (apply-primitive (:prim exp)
                                   (eval-rands (:rands exp) env))
     (throw (Exception. (str "Unknown expression type: " (:op exp))))))

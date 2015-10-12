@@ -11,6 +11,15 @@
     (is (= '{:op :var-exp 
              :id x}
            (parse (read-string "x")))))
+  (testing "if-exp"
+    (is (= '{:op :if-exp
+             :test-exp {:op :lit-exp
+                        :datum 1}
+             :true-exp {:op :lit-exp
+                        :datum 2}
+             :false-exp {:op :lit-exp
+                         :datum 3}}
+           (parse (read-string "(if 1 2 3)")))))
   (testing "primapp-exp +"
     (is (= '{:op :primapp-exp 
              :prim :+

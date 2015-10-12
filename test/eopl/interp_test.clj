@@ -15,6 +15,20 @@
           exp {:op :var-exp
                :id 'x}]
       (is (= 6 (eval-expression exp env)))))
+  (testing "if-exp"
+    (let [env (empty-env)
+          exp {:op :if-exp
+               :true-exp {:op :lit-exp
+                          :datum 42}
+               :false-exp {:op :lit-exp
+                           :datum 24}}
+          t-exp (assoc exp :test-exp {:op :lit-exp
+                                      :datum 1})
+          f-exp (assoc exp :test-exp {:op :lit-exp
+                                      :datum 0})]
+      (is (= 42 (eval-expression t-exp env)))
+      (is (= 24 (eval-expression f-exp env)))))
+
   (testing "primapp-exp"
     (let [env (empty-env)
           exp {:op :primapp-exp
@@ -58,3 +72,10 @@
                :exp {:op :lit-exp
                      :datum 42}}]
       (is (= 42 (eval-program pgm))))))
+
+
+(deftest test-true-value?
+  (testing "true-value?"
+    (is (= true (true-value? 1)))
+    (is (= true (true-value? 2)))
+    (is (= false (true-value? 0)))))
