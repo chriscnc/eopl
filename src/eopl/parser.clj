@@ -10,22 +10,43 @@
         (symbol? elt) {:op :var-exp
                        :id elt}
         (list? elt) (let [rator (first elt)
-                          rands (rest elt)]
-                      (cond (= rator '+) {:op :primapp-exp
-                                          :prim :+
-                                          :rands (map parse rands)}
-                            (= rator '-) {:op :primapp-exp
-                                          :prim :-
-                                          :rands (map parse rands)}
-                            (= rator '*) {:op :primapp-exp
-                                          :prim :*
-                                          :rands (map parse rands)}
-                            (= rator 'add1) {:op :primapp-exp
-                                          :prim :add1
-                                          :rands (map parse rands)}
-                            (= rator 'sub1) {:op :primapp-exp
-                                          :prim :sub1
-                                          :rands (map parse rands)}
+                          rands (rest elt)
+                          rand-count (count rands)]
+                      (cond (= rator '+) 
+                            (if (= 2 rand-count)
+                              {:op :primapp-exp
+                               :prim :+
+                               :rands (map parse rands)}
+                              (throw (Exception. (str "Wrong number of args (" rand-count 
+                                                      ") passed to '+'"))))
+                            (= rator '-) 
+                            (if (= 2 rand-count)
+                              {:op :primapp-exp
+                               :prim :-
+                               :rands (map parse rands)}
+                              (throw (Exception. (str "Wrong number of args (" rand-count 
+                                                      ") passed to '-'"))))
+                            (= rator '*)
+                            (if (= 2 rand-count)
+                              {:op :primapp-exp
+                               :prim :*
+                               :rands (map parse rands)}
+                              (throw (Exception. (str "Wrong number of args (" rand-count 
+                                                      ") passed to '*'"))))
+                            (= rator 'add1)
+                            (if (= 1 rand-count)
+                              {:op :primapp-exp
+                               :prim :add1
+                               :rands (map parse rands)}
+                              (throw (Exception. (str "Wrong number of args (" rand-count 
+                                                      ") passed to 'add1'"))))
+                            (= rator 'sub1)
+                            (if (= 1 rand-count)
+                              {:op :primapp-exp
+                               :prim :sub1
+                               :rands (map parse rands)}
+                              (throw (Exception. (str "Wrong number of args (" rand-count 
+                                                      ") passed to 'sub1'"))))
                             :else (throw (Exception. (str "Unknown rator: " rator)))))
         :else (throw (Exception. (str "Invalid element: " elt)))))
     
