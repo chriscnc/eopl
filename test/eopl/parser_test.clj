@@ -44,13 +44,43 @@
                      {:op :lit-exp
                       :datum 7}]}
            (parse (read-string "(* 6 7)")))))
+  (testing "primapp-exp equal?"
+    (is (= '{:op :primapp-exp
+             :prim :equal?
+             :rands [{:op :lit-exp
+                      :datum 4}
+                     {:op :lit-exp
+                      :datum 4}]}
+           (parse (read-string "(equal? 4 4)")))))
+  (testing "primapp-exp zero?"
+    (is (= '{:op :primapp-exp
+             :prim :zero?
+             :rands [{:op :lit-exp
+                      :datum 4}]}
+           (parse (read-string "(zero? 4)")))))
+  (testing "primapp-exp greater?"
+    (is (= '{:op :primapp-exp
+             :prim :greater?
+             :rands [{:op :lit-exp
+                      :datum 4}
+                     {:op :lit-exp
+                      :datum 4}]}
+           (parse (read-string "(greater? 4 4)")))))
+  (testing "primapp-exp less?"
+    (is (= '{:op :primapp-exp
+             :prim :less?
+             :rands [{:op :lit-exp
+                      :datum 4}
+                     {:op :lit-exp
+                      :datum 4}]}
+           (parse (read-string "(less? 4 4)")))))
   (testing "primapp-exp add1"
     (is (= '{:op :primapp-exp 
              :prim :add1
              :rands [{:op :lit-exp
                       :datum 41}]}
            (parse (read-string "(add1 41)")))))
-  (testing "primapp-exp *"
+  (testing "primapp-exp sub1"
     (is (= '{:op :primapp-exp 
              :prim :sub1
              :rands [{:op :lit-exp

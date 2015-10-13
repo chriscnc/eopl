@@ -15,6 +15,10 @@
     :* (* (first args) (second args))
     :add1 (inc (first args))
     :sub1 (dec (first args))
+    :equal? (if (= (first args) (second args)) 1 0)
+    :zero? (if (= (first args) 0) 1 0)
+    :greater? (if (> (first args) (second args)) 1 0)
+    :less? (if (< (first args) (second args)) 1 0)
     (throw (Exception. (str "Unknown primitive: " prim)))))
 
 

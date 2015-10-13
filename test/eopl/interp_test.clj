@@ -54,7 +54,20 @@
   (testing "add1"
     (is (= 5 (apply-primitive :add1 [4]))))
   (testing "sub1"
-    (is (= 3 (apply-primitive :sub1 [4])))))
+    (is (= 3 (apply-primitive :sub1 [4]))))
+  (testing "equal?"
+    (is (= 1 (apply-primitive :equal? [4 4])))
+    (is (= 0 (apply-primitive :equal? [3 4]))))
+  (testing "zero?"
+    (is (= 1 (apply-primitive :zero? [0])))
+    (is (= 0 (apply-primitive :zero? [4]))))
+  (testing "greater?"
+    (is (= 1 (apply-primitive :greater? [4 3])))
+    (is (= 0 (apply-primitive :greater? [3 4]))))
+  (testing "less?"
+    (is (= 1 (apply-primitive :less? [3 4])))
+    (is (= 0 (apply-primitive :less? [4 3]))))
+  )
 
 
 (deftest test-eval-rands
@@ -79,3 +92,4 @@
     (is (= true (true-value? 1)))
     (is (= true (true-value? 2)))
     (is (= false (true-value? 0)))))
+
