@@ -86,7 +86,20 @@
              :rands [{:op :lit-exp
                       :datum 43}]}
            (parse (read-string "(sub1 43)")))))
+  (testing "cond-exp"
+    (is (= '{:op :cond-exp
+             :test-exps [{:op :lit-exp
+                          :datum 1}
+                         {:op :lit-exp
+                          :datum 0}]
+             :conseq-exps [{:op :lit-exp
+                            :datum 42}
+                           {:op :lit-exp
+                            :datum 43}]}
+           (parse (read-string "(cond (1 42 0 43))")))))
+
 
   )
+
 
 

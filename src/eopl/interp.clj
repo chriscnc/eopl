@@ -46,6 +46,15 @@
               (if (true-value? (eval-expression test-exp env))
                 (eval-expression true-exp env)
                 (eval-expression false-exp env)))
+    :cond-exp (loop [test-exps (:test-exps exp)
+                     conseq-exps (:conseq-exps exp)]
+                (if (empty? test-exps)
+                  0
+                  (let [test-exp (first test-exps)
+                        conseq-exp (first conseq-exps)]
+                    (if (true-value? (eval-expression test-exp env))
+                      (eval-expression conseq-exp env)
+                      (recur (rest test-exps) (rest conseq-exps))))))
     :primapp-exp (apply-primitive (:prim exp)
                                   (eval-rands (:rands exp) env))
     (throw (Exception. (str "Unknown expression type: " (:op exp))))))

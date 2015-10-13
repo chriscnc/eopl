@@ -28,7 +28,15 @@
                                       :datum 0})]
       (is (= 42 (eval-expression t-exp env)))
       (is (= 24 (eval-expression f-exp env)))))
-
+  (testing "cond-exp"
+    (let [env (empty-env) 
+          exp {:op :cond-exp
+               :test-exps [{:op :var-exp 
+                            :id 'x}]
+               :conseq-exps [{:op :lit-exp
+                              :datum 42}]}]
+      (is (= 42 (eval-expression exp (extend-env env {'x 1}))))
+      (is (= 0 (eval-expression exp (extend-env env {'x 0})))))) 
   (testing "primapp-exp"
     (let [env (empty-env)
           exp {:op :primapp-exp
@@ -92,4 +100,6 @@
     (is (= true (true-value? 1)))
     (is (= true (true-value? 2)))
     (is (= false (true-value? 0)))))
+
+
 

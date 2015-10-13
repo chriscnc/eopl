@@ -45,6 +45,12 @@
                                  :test-exp (first parsed-rands)
                                  :true-exp (second parsed-rands)
                                  :false-exp (nth parsed-rands 2)})
+                (= rator 'cond) (let [test-conseqs (first rands)
+                                      test-exps (take-nth 2 test-conseqs)
+                                      conseq-exps (take-nth 2 (rest test-conseqs))]
+                                  {:op :cond-exp
+                                   :test-exps (map parse test-exps)
+                                   :conseq-exps (map parse conseq-exps)})
                 :else (throw (Exception. (str "Unknown rator: " rator)))))
         :else (throw (Exception. (str "Invalid element: " elt)))))
     
