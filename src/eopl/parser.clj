@@ -1,6 +1,7 @@
 (ns eopl.parser
   "We will encode the program text as a Lisp to avoid writing a scanner as
   this is not the focus of this project"
+  (:require [eopl.util :as util])
   (:refer-clojure :exclude [zero?]))
 
 (defn parse
@@ -10,6 +11,8 @@
                        :datum elt}
         (symbol? elt) {:op :var-exp
                        :id elt}
+        (util/bool? elt) {:op :lit-exp
+                          :datum elt}
         (list? elt)
         (let [rator (first elt)
               rands (rest elt)]

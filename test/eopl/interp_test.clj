@@ -23,9 +23,9 @@
                :false-exp {:op :lit-exp
                            :datum 24}}
           t-exp (assoc exp :test-exp {:op :lit-exp
-                                      :datum 1})
+                                      :datum true})
           f-exp (assoc exp :test-exp {:op :lit-exp
-                                      :datum 0})]
+                                      :datum false})]
       (is (= 42 (eval-expression t-exp env)))
       (is (= 24 (eval-expression f-exp env)))))
 
@@ -56,17 +56,17 @@
   (testing "sub1"
     (is (= 3 (apply-primitive :sub1 [4]))))
   (testing "equal?"
-    (is (= 1 (apply-primitive :equal? [4 4])))
-    (is (= 0 (apply-primitive :equal? [3 4]))))
+    (is (apply-primitive :equal? [4 4]))
+    (is (not (apply-primitive :equal? [3 4]))))
   (testing "zero?"
-    (is (= 1 (apply-primitive :zero? [0])))
-    (is (= 0 (apply-primitive :zero? [4]))))
+    (is (apply-primitive :zero? [0]))
+    (is (not (apply-primitive :zero? [4]))))
   (testing "greater?"
-    (is (= 1 (apply-primitive :greater? [4 3])))
-    (is (= 0 (apply-primitive :greater? [3 4]))))
+    (is (apply-primitive :greater? [4 3]))
+    (is (not (apply-primitive :greater? [3 4]))))
   (testing "less?"
-    (is (= 1 (apply-primitive :less? [3 4])))
-    (is (= 0 (apply-primitive :less? [4 3]))))
+    (is (apply-primitive :less? [3 4]))
+    (is (not (apply-primitive :less? [4 3]))))
   )
 
 
@@ -89,7 +89,6 @@
 
 (deftest test-true-value?
   (testing "true-value?"
-    (is (= true (true-value? 1)))
-    (is (= true (true-value? 2)))
-    (is (= false (true-value? 0)))))
+    (is (= true (true-value? true)))
+    (is (= false (true-value? false)))))
 

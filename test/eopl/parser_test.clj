@@ -6,7 +6,14 @@
   (testing "lit-exp"
     (is (= '{:op :lit-exp 
              :datum 42}
-           (parse (read-string "42")))))
+           (parse (read-string "42"))))
+    (is (= '{:op :lit-exp
+             :datum true}
+           (parse (read-string "true"))))
+    (is (= '{:op :lit-exp
+             :datum false}
+           (parse (read-string "false"))))))
+
   (testing "var-exp"
     (is (= '{:op :var-exp 
              :id x}
@@ -87,6 +94,6 @@
                       :datum 43}]}
            (parse (read-string "(sub1 43)")))))
 
-  )
+  
 
 

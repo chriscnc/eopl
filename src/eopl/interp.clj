@@ -2,7 +2,8 @@
   "Simple interpreter AST representation is nested maps.
   :op is a manditory key of every node and is used for 
   dispatch."
-  (:require [eopl.env :refer :all]))
+  (:require [eopl.env :refer :all]
+            [eopl.util :as util]))
 
 
 (defn apply-primitive
@@ -15,10 +16,10 @@
     :* (* (first args) (second args))
     :add1 (inc (first args))
     :sub1 (dec (first args))
-    :equal? (if (= (first args) (second args)) 1 0)
-    :zero? (if (= (first args) 0) 1 0)
-    :greater? (if (> (first args) (second args)) 1 0)
-    :less? (if (< (first args) (second args)) 1 0)
+    :equal? (= (first args) (second args))
+    :zero? (= (first args) 0)
+    :greater? (> (first args) (second args)) 
+    :less? (< (first args) (second args))
     (throw (Exception. (str "Unknown primitive: " prim)))))
 
 
@@ -26,9 +27,9 @@
 
 
 (defn true-value?
-  "Abstracts our encoding of boolean"
+  "Abstracts our encoding of boolean."
   [x]
-  (not (zero? x)))
+  (true? x))
 
 
 (defn eval-expression 
@@ -42,10 +43,13 @@
     :var-exp (apply-env env (:id exp))
     :if-exp (let [test-exp (:test-exp exp)
                   true-exp (:true-exp exp)
-                  false-exp (:false-exp exp)]
-              (if (true-value? (eval-expression test-exp env))
-                (eval-expression true-exp env)
-                (eval-expression false-exp env)))
+                  false-exp (:false-exp exp)
+                  test-val (eval-expression test-exp env)]
+              (if (util/bool? test-val)
+                (if (true-value? (eval-expression test-exp env))
+                  (eval-expression true-exp env)
+                  (eval-expression false-exp env))
+                (throw (Exception. "Non-boolean value in test-exp of 'if'"))))
     :primapp-exp (apply-primitive (:prim exp)
                                   (eval-rands (:rands exp) env))
     (throw (Exception. (str "Unknown expression type: " (:op exp))))))
