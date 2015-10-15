@@ -15,6 +15,14 @@
     :* (* (first args) (second args))
     :add1 (inc (first args))
     :sub1 (dec (first args))
+    (throw (Exception. (str "Unknown primitive: " prim)))))
+
+
+(defn eval-bool-exp
+  "Evaluate a boolean expressiong with the args that 
+  have already been evaluted in an environment"
+  [prim args]
+  (case prim
     :equal? (if (= (first args) (second args)) 1 0)
     :zero? (if (= (first args) 0) 1 0)
     :greater? (if (> (first args) (second args)) 1 0)
@@ -40,6 +48,8 @@
   (case (:op exp)
     :lit-exp (:datum exp)
     :var-exp (apply-env env (:id exp))
+    :bool-exp (eval-bool-exp (:prim exp)
+                             (eval-rands (:rands exp) env))
     :if-exp (let [test-exp (:test-exp exp)
                   true-exp (:true-exp exp)
                   false-exp (:false-exp exp)]

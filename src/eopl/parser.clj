@@ -28,16 +28,16 @@
                 (= rator 'sub1) {:op :primapp-exp
                                  :prim :sub1
                                  :rands (map parse rands)}
-                (= rator 'equal?) {:op :primapp-exp
+                (= rator 'equal?) {:op :bool-exp
                                    :prim :equal?
                                    :rands (map parse rands)}
-                (= rator 'zero?) {:op :primapp-exp
+                (= rator 'zero?) {:op :bool-exp
                                   :prim :zero?
                                   :rands (map parse rands)}
-                (= rator 'greater?) {:op :primapp-exp
+                (= rator 'greater?) {:op :bool-exp
                                      :prim :greater?
                                      :rands (map parse rands)}
-                (= rator 'less?) {:op :primapp-exp
+                (= rator 'less?) {:op :bool-exp
                                   :prim :less?
                                   :rands (map parse rands)}
                 (= rator 'if) (let [parsed-rands (map parse rands)]
