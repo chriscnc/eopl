@@ -9,31 +9,38 @@
                        :datum elt}
         (symbol? elt) {:op :var-exp
                        :id elt}
-        (list? elt) (let [rator (first elt)
-                          rands (rest elt)]
-                      (cond (= rator '+) {:op :primapp-exp
-                                          :prim :+
-                                          :rands (map parse rands)}
-                            (= rator '-) {:op :primapp-exp
-                                          :prim :-
-                                          :rands (map parse rands)}
-                            (= rator '*) {:op :primapp-exp
-                                          :prim :*
-                                          :rands (map parse rands)}
-                            (= rator 'add1) {:op :primapp-exp
-                                          :prim :add1
-                                          :rands (map parse rands)}
-                            (= rator 'sub1) {:op :primapp-exp
-                                          :prim :sub1
-                                          :rands (map parse rands)}
-                            (= rator 'if) (let [parsed-rands (map parse rands)]
-                                            {:op :if-exp
-                                             :test-exp (first parsed-rands)
-                                             :true-exp (second parsed-rands)
-                                             :false-exp (nth parsed-rands 2)})
-                            :else (throw (Exception. (str "Unknown rator: " rator)))))
+        (list? elt) 
+        (let [rator (first elt)
+              rands (rest elt)]
+          (cond (= rator '+) {:op :primapp-exp
+                              :prim :+
+                              :rands (map parse rands)}
+                (= rator '-) {:op :primapp-exp
+                              :prim :-
+                              :rands (map parse rands)}
+                (= rator '*) {:op :primapp-exp
+                              :prim :*
+                              :rands (map parse rands)}
+                (= rator 'add1) {:op :primapp-exp
+                                 :prim :add1
+                                 :rands (map parse rands)}
+                (= rator 'sub1) {:op :primapp-exp
+                                 :prim :sub1
+                                 :rands (map parse rands)}
+                (= rator 'if) (let [parsed-rands (map parse rands)]
+                                {:op :if-exp
+                                 :test-exp (first parsed-rands)
+                                 :true-exp (second parsed-rands)
+                                 :false-exp (nth parsed-rands 2)})
+                (= rator 'let) (let [bindings (first rands)
+                                     body (second rands)
+                                     rands (map second bindings)]
+                                 {:op :let-exp
+                                  :ids (map first bindings)
+                                  :rands (map #(parse (second %)) bindings)
+                                  :body (parse body)})
+                :else (throw (Exception. (str "Unknown rator: " rator)))))
         :else (throw (Exception. (str "Invalid element: " elt)))))
-    
-
+  
 
 

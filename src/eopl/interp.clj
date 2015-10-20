@@ -42,6 +42,11 @@
               (if (true-value? (eval-expression test-exp env))
                 (eval-expression true-exp env)
                 (eval-expression false-exp env)))
+    :let-exp (let [ids (:ids exp)
+                   rands (eval-rands (:rands exp) env)
+                   bindings (zipmap ids rands)
+                   body (:body exp)]
+               (eval-expression body (extend-env env bindings)))
     :primapp-exp (apply-primitive (:prim exp)
                                   (eval-rands (:rands exp) env))
     (throw (Exception. (str "Unknown expression type: " (:op exp))))))

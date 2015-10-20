@@ -20,6 +20,18 @@
              :false-exp {:op :lit-exp
                          :datum 3}}
            (parse (read-string "(if 1 2 3)")))))
+  (testing "let-exp"
+    (is (= '{:op :let-exp
+             :ids [x y]
+             :rands [{:op :lit-exp :datum 1}
+                     {:op :lit-exp :datum 2}]
+             :body {:op :primapp-exp
+                    :prim :+
+                    :rands [{:op :var-exp
+                             :id x}
+                            {:op :var-exp
+                             :id y}]}}
+           (parse (read-string "(let ((x 1) (y 2)) (+ x y))")))))
   (testing "primapp-exp +"
     (is (= '{:op :primapp-exp 
              :prim :+

@@ -28,7 +28,19 @@
                                       :datum 0})]
       (is (= 42 (eval-expression t-exp env)))
       (is (= 24 (eval-expression f-exp env)))))
-
+  (testing "let-exp"
+    (let [env (empty-env)
+          exp {:op :let-exp
+               :ids ['x 'y]
+               :rands [{:op :lit-exp :datum 1}
+                       {:op :lit-exp :datum 2}]
+               :body {:op :primapp-exp
+                      :prim :+
+                      :rands [{:op :var-exp
+                               :id 'x}
+                              {:op :var-exp
+                               :id 'y}]}}]
+      (is (= 3 (eval-expression exp env)))))
   (testing "primapp-exp"
     (let [env (empty-env)
           exp {:op :primapp-exp
