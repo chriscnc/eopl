@@ -7,17 +7,17 @@
 
 (defn read-eval-print 
   []
-  (do
-    (print "eopl=> ")
-    (flush)
-    (try
-      (let [line (read-line)]
-        (when (not (empty? line))
-          (println (eval-expression (parse (read-string line))
-                                    (empty-env)))))
-      (catch Exception e
-        (println e)))
-    (recur)))
+  (let [env (extend-env (empty-env) {'emptylist (list)})]
+    (do
+      (print "eopl=> ")
+      (flush)
+      (try
+        (let [line (read-line)]
+          (when (not (empty? line))
+            (println (eval-expression (parse (read-string line)) env))))
+        (catch Exception e
+          (println e)))
+      (recur))))
 
 
 (defn -main

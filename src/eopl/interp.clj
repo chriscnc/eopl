@@ -15,6 +15,24 @@
     :* (* (first args) (second args))
     :add1 (inc (first args))
     :sub1 (dec (first args))
+    :list (apply list args)
+
+    ; args is a list of arguments where the first argument is list 
+    :car (let [lst (first args)]
+           (if (empty? lst)
+             (throw (Exception. "Can't take the car of an empty list"))
+             (first lst)))
+
+    ; args is a list of arguments where
+    ; the first argument is an element and the second is a list
+    :cons (let [elt (first args)
+                lst (second args)]
+            (cons elt lst))
+
+    ; args is a list of arguments where the first argument is a list
+    :cdr (let [lst (first args)]
+           (rest lst))
+
     (throw (Exception. (str "Unknown primitive: " prim)))))
 
 
@@ -25,6 +43,12 @@
   "Abstracts our encoding of boolean"
   [x]
   (not (zero? x)))
+
+(defn list-value?
+  "Abstracts our encoding of a list"
+  [x]
+  (and (= (:op x) :primapp-exp)
+       (= (:prim x) :list)))
 
 
 (defn eval-expression 
@@ -47,9 +71,19 @@
                    bindings (zipmap ids rands)
                    body (:body exp)]
                (eval-expression body (extend-env env bindings)))
+    :unpack-exp (if (list-value? (:exp exp))
+                  (let [ids (:ids exp)
+                        lst (eval-rands (:rands (:exp exp)) env)
+                        bindings (zipmap ids lst)
+                        body (:body exp)]
+                    (if (= (count ids) (count lst))
+                      (eval-expression body (extend-env env bindings))
+                      (throw (Exception. (str "Wrong number of values to unpack: " ids " <= " lst)))))
+                  (throw (Exception. (str "List expression required to unpack: " (:op (:exp exp)) " found."))))
     :primapp-exp (apply-primitive (:prim exp)
                                   (eval-rands (:rands exp) env))
     (throw (Exception. (str "Unknown expression type: " (:op exp))))))
+
 
 
 (defn eval-rands
