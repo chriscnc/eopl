@@ -4,6 +4,8 @@
   dispatch."
   (:require [eopl.env :refer :all]))
 
+(declare eval-rands)
+(declare apply-procval)
 
 (defn apply-primitive
   "Evaluate primitive expressions with args that have
@@ -18,13 +20,25 @@
     (throw (Exception. (str "Unknown primitive: " prim)))))
 
 
-(declare eval-rands)
-
-
 (defn true-value?
   "Abstracts our encoding of boolean"
   [x]
   (not (zero? x)))
+
+
+(defn procval? 
+  [x]
+  (and (contains? x :ids)
+       (contains? x :body)
+       (contains? x :env)))
+
+
+(defn make-closure
+  "Construct a closure"
+  [ids body env]
+  {:ids ids
+   :body body
+   :env env})
 
 
 (defn eval-expression 
@@ -47,9 +61,26 @@
                    bindings (zipmap ids rands)
                    body (:body exp)]
                (eval-expression body (extend-env env bindings)))
+    :proc-exp (make-closure (:ids exp) (:body exp) env)
+    :app-exp (let [proc (eval-expression (:rator exp) env)
+                   args (eval-rands (:rands exp) env)]
+               (if (procval? proc)
+                 (apply-procval proc args)
+                 (throw (Exception. (str "Attempt to apply non-procedure: " (:rator exp))))))
     :primapp-exp (apply-primitive (:prim exp)
                                   (eval-rands (:rands exp) env))
     (throw (Exception. (str "Unknown expression type: " (:op exp))))))
+
+
+(defn apply-procval
+  "Evaluate the body of a closure in an environment extended
+  with args"
+  [proc args]
+  (let [ids (:ids proc)
+        body (:body proc)
+        env (:env proc)
+        bindings (zipmap ids args)]
+    (eval-expression body (extend-env env bindings))))
 
 
 (defn eval-rands

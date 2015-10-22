@@ -41,6 +41,35 @@
                               {:op :var-exp
                                :id 'y}]}}]
       (is (= 3 (eval-expression exp env)))))
+  (testing "proc-exp"
+    (let [env (extend-env (empty-env) {'y 2})
+          exp {:op :proc-exp
+               :ids ['x]
+               :body {:op :primapp-exp
+                      :prim :+
+                      :rands [{:op :var-exp :id 'x}
+                              {:op :var-exp :id 'y}]}}]
+      (is (= {:ids ['x]
+              :body {:op :primapp-exp
+                      :prim :+
+                      :rands [{:op :var-exp :id 'x}
+                              {:op :var-exp :id 'y}]}
+              :env (list {'y 2})}
+             (eval-expression exp env)))))
+  (testing "app-exp"
+    (let [ae {:op :app-exp
+              :rator {:op :var-exp
+                      :id 'f}
+              :rands [{:op :lit-exp
+                       :datum 1}]}
+          ev (extend-env (empty-env) {'f {:op :proc-exp
+                                          :ids ['x]
+                                          :body {:op :primapp-exp
+                                                 :prim :+
+                                                 :rands [{:op :var-exp :id 'x}
+                                                         {:op :var-exp :id 'y}]}
+                                          :env (list {'y 2})}})]
+      (is (= 3 (eval-expression ae ev)))))
   (testing "primapp-exp"
     (let [env (empty-env)
           exp {:op :primapp-exp
@@ -69,6 +98,17 @@
     (is (= 3 (apply-primitive :sub1 [4])))))
 
 
+(deftest test-apply-procval
+  (let [proc {:ids ['x]
+              :body {:op :primapp-exp
+                     :prim :+
+                     :rands [{:op :var-exp :id 'x}
+                             {:op :var-exp :id 'y}]}
+              :env (list {'y 2})}
+        args (list 5)]
+    (is (= 7 (apply-procval proc args)))))
+
+
 (deftest test-eval-rands
   (is (= (eval-rands [{:op :lit-exp
                        :datum 4}
@@ -91,3 +131,12 @@
     (is (= true (true-value? 1)))
     (is (= true (true-value? 2)))
     (is (= false (true-value? 0)))))
+
+
+(deftest test-procval?
+  (testing "is procval"
+    (is (= true (procval? {:ids ['x 'y]
+                           :body {:op :lit-exp :datum 1}
+                           :env (list)}))))
+  (testing "is not procval"
+    (is (= false (procval? {})))))

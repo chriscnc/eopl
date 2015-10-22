@@ -32,6 +32,22 @@
                             {:op :var-exp
                              :id y}]}}
            (parse (read-string "(let ((x 1) (y 2)) (+ x y))")))))
+  (testing "proc-exp"
+    (is (= '{:op :proc-exp
+             :ids [x y]
+             :body {:op :primapp-exp
+                    :prim :+
+                    :rands [{:op :var-exp
+                             :id x}
+                            {:op :var-exp
+                             :id y}]}}
+           (parse (read-string "(proc (x y) (+ x y))")))))
+  (testing "app-exp"
+    (is (= '{:op :app-exp
+             :rator {:op :var-exp :id f}
+             :rands [{:op :lit-exp :datum 1}
+                     {:op :lit-exp :datum 2}]}
+           (parse (read-string "(f 1 2)")))))
   (testing "primapp-exp +"
     (is (= '{:op :primapp-exp 
              :prim :+

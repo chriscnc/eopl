@@ -25,5 +25,13 @@
            7 (eval-str "(let ((y 2)) (+ x y))" env-x)
            3 (eval-str "(let ((x 1) (y 2)) (+ x y))" env-x)
            1 (eval-str "(let ((x 1)) (let ((y x)) y))" env)
+           8 (eval-str (str "(let ((x 5)) "
+                            "(let ((f (proc (y) (+ x y)))) "
+                            "(f 3)))") env)
+           176 (eval-str (str "(let ((x 5)) "
+                              "(let ((x 38) "
+                                    "(f (proc (y z) (* y (+ x z)))) "
+                                    "(g (proc (u) (+ u x)))) "
+                              "(f (g 3) 17)))") env)
            ))))
 

@@ -39,8 +39,14 @@
                                   :ids (map first bindings)
                                   :rands (map #(parse (second %)) bindings)
                                   :body (parse body)})
-                :else (throw (Exception. (str "Unknown rator: " rator)))))
-        :else (throw (Exception. (str "Invalid element: " elt)))))
+                (= rator 'proc) {:op :proc-exp
+                                 :ids (first rands)
+                                 :body (parse (second rands))}
+                ; else it's an app-exp
+                :else {:op :app-exp
+                       :rator {:op :var-exp :id rator}
+                       :rands (map parse rands)}))
+          :else (throw (Exception. (str "Invalid element: " elt)))))
   
 
 
