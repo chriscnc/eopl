@@ -99,14 +99,22 @@
 
 
 (deftest test-apply-procval
-  (let [proc {:ids ['x]
-              :body {:op :primapp-exp
-                     :prim :+
-                     :rands [{:op :var-exp :id 'x}
-                             {:op :var-exp :id 'y}]}
-              :env (list {'y 2})}
-        args (list 5)]
-    (is (= 7 (apply-procval proc args)))))
+  (testing "correct arity"
+    (let [proc {:ids ['x]
+                :body {:op :primapp-exp
+                       :prim :+
+                       :rands [{:op :var-exp :id 'x}
+                               {:op :var-exp :id 'y}]}
+                :env (list {'y 2})}
+          args (list 5)]
+      (is (= 7 (apply-procval proc args)))))
+  (testing "incorect arity"
+    (let [proc {:ids ['x]
+                :body {:op :var-exp
+                       :id 'x}
+                :env (list)}
+          args (list 1 2)]
+      (is (thrown? Exception (apply-procval proc args))))))
 
 
 (deftest test-eval-rands

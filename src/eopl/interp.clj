@@ -78,9 +78,11 @@
   [proc args]
   (let [ids (:ids proc)
         body (:body proc)
-        env (:env proc)
-        bindings (zipmap ids args)]
-    (eval-expression body (extend-env env bindings))))
+        env (:env proc)]
+    (if (= (count ids) (count args))
+      (let [bindings (zipmap ids args)]
+        (eval-expression body (extend-env env bindings)))
+      (throw (Exception. "Function called with wrong arity")))))
 
 
 (defn eval-rands
