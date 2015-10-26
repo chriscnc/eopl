@@ -32,6 +32,14 @@
                               "(let ((x 38) "
                                     "(f (proc (y z) (* y (+ x z)))) "
                                     "(g (proc (u) (+ u x)))) "
-                              "(f (g 3) 17)))") env)
+                              "(f (g 3) 17)))") env)))
+    (testing "exercise 3.21"
+      (are [expected actual] (= expected actual)
+           120 (eval-str (str "(let ((makefact (proc (maker, x) "
+                              "                  (if x "
+                              "                    (* x (maker maker (- x 1))) "
+                              "                    1)))) "
+                              "  (let ((fact (proc (x) (makefact makefact x)))) "
+                              "    (fact 5)))") env)
            ))))
 
