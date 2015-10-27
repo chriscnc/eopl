@@ -7,20 +7,17 @@
 
 (defn extend-env 
   [syms vals env]
-  (conj env (list (into [] syms) (into [] vals))))
+  (conj env (list (into [] vals))))
 
 
 (defn apply-env
-  [env sym]
+  [env depth position]
   (if (empty? env)
-    (throw (Exception. (str "No binding for " sym)))
-    (let [syms (ffirst env)
-          vals (second (first env))
-          env (rest env)]
-      (let [pos (.indexOf syms sym)]
-        (if (not= pos -1)
-          (get vals pos)
-          (apply-env env sym))))))
+    (throw (Exception. (str "No binding at: d=" depth ",p=" position)))
+    (if (zero? depth)
+      (get (ffirst env) position)
+      (apply-env (rest env) (dec depth) position))))
+
 
 
             
