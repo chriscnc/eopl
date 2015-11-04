@@ -7,7 +7,7 @@
 
 (deftest test-comparison-operators
   (let [env (empty-env)
-        env-x (extend-env env {'x 5})
+        env-x (extend-env ['x] [5] env)
         eval-str (fn [exp-str env] 
                    (eval-expression (parse (read-string exp-str)) env))]
     (testing "program fragments"

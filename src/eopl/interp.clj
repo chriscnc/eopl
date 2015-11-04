@@ -2,7 +2,8 @@
   "Simple interpreter AST representation is nested maps.
   :op is a manditory key of every node and is used for 
   dispatch."
-  (:require [eopl.env :refer :all]))
+  (:require [clojure.pprint :refer [pprint]]
+            [eopl.env :refer :all]))
 
 (declare eval-rands)
 (declare apply-procval)
@@ -58,9 +59,8 @@
                 (eval-expression false-exp env)))
     :let-exp (let [ids (:ids exp)
                    rands (eval-rands (:rands exp) env)
-                   bindings (zipmap ids rands)
                    body (:body exp)]
-               (eval-expression body (extend-env env bindings)))
+               (eval-expression body (extend-env ids rands env)))
     :proc-exp (make-closure (:ids exp) (:body exp) env)
     :app-exp (let [proc (eval-expression (:rator exp) env)
                    args (eval-rands (:rands exp) env)]
@@ -78,9 +78,8 @@
   [proc args]
   (let [ids (:ids proc)
         body (:body proc)
-        env (:env proc)
-        bindings (zipmap ids args)]
-    (eval-expression body (extend-env env bindings))))
+        env (:env proc)]
+    (eval-expression body (extend-env ids args env))))
 
 
 (defn eval-rands
