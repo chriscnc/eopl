@@ -1,37 +1,39 @@
 (ns eopl.core-test
   (:require [clojure.test :refer :all]
-            [eopl.env :refer :all]
-            [eopl.interp :refer :all]
-            [eopl.parser :refer :all]))
+            [eopl.core :refer :all]))
 
 
-(deftest test-comparison-operators
-  (let [env (empty-env)
-        env-x (extend-env ['x] [5] env)
-        eval-str (fn [exp-str env] 
-                   (eval-expression (parse (read-string exp-str)) env))]
-    (testing "program fragments"
-      (are [expected actual] (= expected actual)
-           1 (eval-str "1" env)
-           5 (eval-str "x" env-x)
-           3 (eval-str "(+ 1 2)" env)
-           0 (eval-str "(- 2 2)" env)
-           6 (eval-str "(* 3 2)" env)
-           2 (eval-str "(add1 1)" env)
-           1 (eval-str "(sub1 2)" env)
-           2 (eval-str "(if (- 2 2) (add1 3) (sub1 3))" env)
-           4 (eval-str "(if (- 2 1) (add1 3) (sub1 3))" env)
-           3 (eval-str "(let ((x 1) (y 2)) (+ x y))" env)
-           7 (eval-str "(let ((y 2)) (+ x y))" env-x)
-           3 (eval-str "(let ((x 1) (y 2)) (+ x y))" env-x)
-           1 (eval-str "(let ((x 1)) (let ((y x)) y))" env)
-           8 (eval-str (str "(let ((x 5)) "
-                            "(let ((f (proc (y) (+ x y)))) "
-                            "(f 3)))") env)
-           176 (eval-str (str "(let ((x 5)) "
-                              "(let ((x 38) "
-                                    "(f (proc (y z) (* y (+ x z)))) "
-                                    "(g (proc (u) (+ u x)))) "
-                              "(f (g 3) 17)))") env)
-           ))))
+(deftest test-interpreter
+  (is (= 1 (run "1")))
+  (is (= 3 (run "(+ 1 2)")))
+  (is (= 0 (run "(- 2 2)")))
+  (is (= 6 (run "(* 3 2)")))
+  (is (= 2 (run "(add1 1)")))
+  (is (= 1 (run "(sub1 2)")))
+  (is (= 2 (run "(if (- 2 2) 
+                   (add1 3) 
+                   (sub1 3))")))
+  (is (= 4 (run "(if (- 2 1) 
+                   (add1 3) 
+                   (sub1 3))")))
+  (is (= 3 (run "(let ((x 1) (y 2)) 
+                   (+ x y))")))
+  (is (= 3 (run "(let ((x 1) (y 2)) 
+                   (+ x y))")))
+  (is (= 3 (run "(let ((x 5))
+                   (let ((x 1) (y 2))
+                     (+ x y)))")))
+  (is (= 3 (run "(let ((x 1)) 
+                   (let ((y 2)) 
+                     (+ x y)))")))
+  (is (= 8 (run "(let ((x 5))
+                   (let ((f (proc (y) (+ x y))))
+                     (f 3)))")))
+  (is (= 176 (run "(let ((x 5))
+                     (let ((x 38)
+                           (f (proc (y z) (* y (+ x z))))
+                           (g (proc (u) (+ u x))))
+                       (f (g 3) 17)))")))
+)
 
+       

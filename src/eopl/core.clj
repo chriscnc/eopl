@@ -5,6 +5,12 @@
   (:gen-class))
 
 
+
+(defn run 
+  [exp-str]
+  (eval-expression (parse (read-string exp-str)) (empty-env)))
+
+
 (defn read-eval-print 
   []
   (do

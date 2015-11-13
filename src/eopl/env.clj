@@ -1,6 +1,8 @@
 (ns eopl.env
   "The environment is represented by a list of maps"
-  (:require [clojure.pprint :refer [pprint]]))
+  (:require [clojure.pprint :refer [pprint]]
+            [eopl.ast :refer :all])
+  (:import [eopl.ast Closure]))
 
 (defrecord EmptyEnv [])
 (defrecord ExtendedEnv [syms vals env])
@@ -14,10 +16,25 @@
 
 
 (defn extend-env 
-  "Extend and environment with a new set of bindings.
-  'bindings is a map."
+  "Extend an environment with a new set of bindings."
   [syms vals env]
   (ExtendedEnv. (vec syms) (vec vals) env))
+
+
+(defn extend-env-rec
+  "Extend an environment with a new set of bindings recursively."
+  [proc-names idss bodies old-env]
+  (let [len (count proc-names)
+        closures (atom [])
+        env (ExtendedEnv. proc-names
+                          closures
+                          old-env)]
+    (do
+      (doseq [pos (range len)]
+        (swap! closures conj (Closure. (nth idss pos)
+                                       (nth bodies pos)
+                                       env)))
+      env)))
 
 
 (defn apply-env 
