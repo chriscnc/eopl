@@ -10,6 +10,9 @@
   (is (= 6 (run "(* 3 2)")))
   (is (= 2 (run "(add1 1)")))
   (is (= 1 (run "(sub1 2)")))
+  (is (= 1 (run "(zero? 0)")))
+  (is (= 0 (run "(zero? 1)")))
+  (is (= 1 (run "(if (zero? 0) 1 2)")))
   (is (= 2 (run "(if (- 2 2) 
                    (add1 3) 
                    (sub1 3))")))
@@ -34,6 +37,16 @@
                            (f (proc (y z) (* y (+ x z))))
                            (g (proc (u) (+ u x))))
                        (f (g 3) 17)))")))
+  (is (= 120 (run "(letrec ((fact (proc (n)
+                                    (if (zero? n)
+                                      1
+                                      (* n (fact (sub1 n)))))))
+                    (fact 5))")))
+  (is (= 1 (run "(letrec ((even (proc (x) (if (zero? x) 1 (odd (sub1 x)))))
+                          (odd (proc (x) (if (zero? x) 0 (even (sub1 x))))))
+                  (odd 13))")))
+                     
+
 )
 
        

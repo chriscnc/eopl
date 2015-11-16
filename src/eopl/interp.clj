@@ -5,8 +5,8 @@
   (:require [clojure.pprint :refer [pprint]]
             [eopl.env :refer :all]
             [eopl.ast :refer :all])
-  (:import [eopl.ast Closure LitExp VarExp IfExp LetExp ProcExp AppExp 
-            PrimExp AddPrim SubPrim MulPrim IncPrim DecPrim]))
+  (:import [eopl.ast Closure LitExp VarExp IfExp LetExp LetRecExp ProcExp AppExp 
+            PrimExp AddPrim SubPrim MulPrim IncPrim DecPrim ZeroPrim]))
 
 
 (declare eval-rands)
@@ -23,6 +23,7 @@
     MulPrim (* (first args) (second args))
     IncPrim (inc (first args))
     DecPrim (dec (first args))
+    ZeroPrim (if (zero? (first args)) 1 0)
     (throw (Exception. (str "Unknown primitive: " prim)))))
 
 
@@ -54,6 +55,8 @@
                  rands (eval-rands (:rands exp) env)
                  body (:body exp)]
              (eval-expression body (extend-env ids rands env)))
+    LetRecExp (let [{:keys [proc-names idss bodies letrec-body]} exp]
+                (eval-expression letrec-body (extend-env-rec proc-names idss bodies env)))
     ProcExp (Closure. (:ids exp) (:body exp) env)
     AppExp (let [proc (eval-expression (:rator exp) env)
                  args (eval-rands (:rands exp) env)]

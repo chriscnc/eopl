@@ -6,7 +6,6 @@
 
 (defrecord EmptyEnv [])
 (defrecord ExtendedEnv [syms vals env])
-(defrecord RecExtendedEnv [proc-names idss bodies env])
 
 
 (defn empty-env 
@@ -45,7 +44,9 @@
     ExtendedEnv (let [{:keys [syms vals env]} env]
                   (let [pos (.indexOf syms sym)]
                     (if (not= pos -1)
-                      (nth vals pos)
+                      (if (instance? clojure.lang.Atom vals)
+                        (nth (deref vals) pos)
+                        (nth vals pos))
                       (apply-env env sym))))
       (throw (Exception. (format "Invalid env type: %s" env)))))
 

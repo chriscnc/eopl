@@ -2,8 +2,8 @@
   (:require [clojure.test :refer :all]
             [eopl.parser :refer :all]
             [eopl.ast :refer :all])
-  (:import [eopl.ast LitExp VarExp IfExp LetExp ProcExp AppExp 
-            PrimExp AddPrim SubPrim MulPrim IncPrim DecPrim]))
+  (:import [eopl.ast LitExp VarExp IfExp LetExp LetRecExp ProcExp AppExp 
+            PrimExp AddPrim SubPrim MulPrim IncPrim DecPrim ZeroPrim]))
 
 (deftest test-parse
   (testing "lit-exp"
@@ -22,7 +22,17 @@
                     [(LitExp. 1) (LitExp. 2)]
                     (PrimExp. (AddPrim.)
                               [(VarExp. 'x) (VarExp. 'y)]))
-           (parse (read-string "(let ((x 1) (y 2)) (+ x y))")))))
+           (parse (read-string "(let ((x 1) (y 2)) 
+                                  (+ x y))")))))
+  (testing "let-rec-exp"
+    (is (= (LetRecExp. ['f 'g]
+                       [['x] ['x]]
+                       [(AppExp. (VarExp. 'g) [(VarExp. 'x)])
+                        (AppExp. (VarExp. 'f) [(VarExp. 'x)])]
+                       (AppExp. (VarExp. 'f) [(LitExp. 1)]))
+           (parse (read-string "(letrec ((f (proc (x) (g x)))
+                                         (g (proc (x) (f x))))
+                                  (f 1))")))))
   (testing "proc-exp"
     (is (= (ProcExp. ['x 'y]
                      (PrimExp. (AddPrim.)
@@ -57,6 +67,10 @@
                      [(LitExp. 43)])
            (parse (read-string "(sub1 43)"))))
     (is (thrown? Exception (parse (read-string "(sub1 1 2)")))))
+  (testing "prim-exp zero?"
+    (is (= (PrimExp. (ZeroPrim.)
+                     [(LitExp. 0)])
+           (parse (read-string "(zero? 0)")))))
   )
 
 
