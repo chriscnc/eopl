@@ -1,14 +1,19 @@
 (ns eopl.parser-test
   (:require [clojure.test :refer :all]
             [eopl.parser :refer :all]
-            [eopl.ast :refer :all])
-  (:import [eopl.ast LitExp VarExp IfExp LetExp LetRecExp ProcExp AppExp 
-            PrimExp AddPrim SubPrim MulPrim IncPrim DecPrim ZeroPrim]))
+            [eopl.ast :refer :all]
+            [eopl.types :refer :all])
+  (:import [eopl.ast LitExp TrueExp FalseExp VarExp IfExp LetExp LetRecExp ProcExp AppExp 
+            PrimExp AddPrim SubPrim MulPrim IncPrim DecPrim ZeroPrim]
+           [eopl.types AtomicType ProcType]))
 
 (deftest test-parse
   (testing "lit-exp"
     (is (= (LitExp. 42)
            (parse (read-string "42")))))
+  (testing "bool exp's"
+    (is (= (TrueExp.) (parse (read-string "true"))))
+    (is (= (FalseExp.) (parse (read-string "false")))))
   (testing "var-exp"
     (is (= (VarExp. 'x)
            (parse (read-string "x")))))
@@ -34,10 +39,11 @@
                                          (g (proc (x) (f x))))
                                   (f 1))")))))
   (testing "proc-exp"
-    (is (= (ProcExp. ['x 'y]
+    (is (= (ProcExp. [int-type int-type]
+                     ['x 'y]
                      (PrimExp. (AddPrim.)
                                [(VarExp. 'x) (VarExp. 'y)]))
-           (parse (read-string "(proc (x y) (+ x y))")))))
+           (parse (read-string "(proc (x int, y int) (+ x y))")))))
   (testing "app-exp"
     (is (= (AppExp. (VarExp. 'f)
                     [(LitExp. 1) (LitExp. 2)])
@@ -74,3 +80,7 @@
   )
 
 
+(deftest test-parse-type
+  (is (= int-type (parse-type 'int)))
+  (is (= bool-type (parse-type 'bool)))
+  (is (thrown? Exception (parse-type 'junk))))
