@@ -23,7 +23,7 @@
     MulPrim (* (first args) (second args))
     IncPrim (inc (first args))
     DecPrim (dec (first args))
-    ZeroPrim (if (zero? (first args)) 1 0)
+    ZeroPrim (zero? (first args))
     (throw (Exception. (str "Unknown primitive: " prim)))))
 
 
@@ -48,7 +48,7 @@
     LitExp (:datum exp)
     VarExp (apply-env env (:id exp))
     IfExp (let [{:keys [test-exp true-exp false-exp]} exp]
-            (if (true-value? (eval-expression test-exp env))
+            (if (eval-expression test-exp env)
               (eval-expression true-exp env)
               (eval-expression false-exp env)))
     LetExp (let [ids (:ids exp)
